@@ -1,0 +1,42 @@
+# ══════════════════════════════════════════════════════════════
+#  SourceMind — .dockerignore
+#  Keeps Docker build context lean and fast
+# ══════════════════════════════════════════════════════════════
+
+# Version control
+.git
+.gitignore
+
+# Dependencies (will be installed fresh in the container)
+node_modules/
+backend/.venv/
+__pycache__/
+*.pyc
+
+# Local data (mounted as volumes instead)
+chroma_db/
+backend/chroma_db/
+
+# Environment files (injected via env_file in compose)
+.env
+.env.*
+!.env.example
+
+# IDE & OS
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Documentation & meta
+docs/
+*.md
+LICENSE
+.github/

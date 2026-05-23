@@ -45,6 +45,7 @@ ENV/
 dist/
 build/
 *.whl
+uv.lock
 
 # Installer logs
 pip-log.txt
