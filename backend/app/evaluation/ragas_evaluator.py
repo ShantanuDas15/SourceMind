@@ -1,8 +1,7 @@
 import asyncio
 from typing import Dict, List
 from datasets import Dataset
-from ragas import evaluate
-from ragas.metrics import faithfulness, answer_relevancy
+
 from loguru import logger
 from langchain_groq import ChatGroq
 
@@ -36,6 +35,8 @@ async def evaluate_rag_response(question: str, answer: str, contexts: List[str])
     }
     
     try:
+        from ragas import evaluate
+        from ragas.metrics import faithfulness, answer_relevancy
         dataset = Dataset.from_dict(data)
         
         # Run evaluation
