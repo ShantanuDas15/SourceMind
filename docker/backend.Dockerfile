@@ -21,6 +21,9 @@ RUN uv venv /opt/venv && \
     . /opt/venv/bin/activate && \
     uv pip install -r requirements.txt pydantic-settings
 
+# Install playwright browsers
+RUN . /opt/venv/bin/activate && playwright install chromium
+
 # ============================================
 # Stage 2: Runtime — lean production image
 # ============================================
@@ -36,15 +39,25 @@ ENV PATH="/opt/venv/bin:$PATH" \
 
 WORKDIR /app
 
+# Install system dependencies for Playwright
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libnss3 \
+    libxss1 \
+    libasound2t64 \
+    libatk-bridge2.0-0 \
+    libgtk-3-0 \
+    libgbm-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy application code
 COPY . .
 
-# Expose the FastAPI port
-EXPOSE 8000
+# Expose the Hugging Face Spaces default port
+EXPOSE 7860
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')" || exit 1
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:7860/api/health')" || exit 1
 
-# Start the server
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Start the server on port 7860
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "7860"]

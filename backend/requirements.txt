@@ -12,9 +12,12 @@ ragas>=0.4.3
 chromadb>=1.5.9
 langchain-chroma>=0.3.0
 rank-bm25>=0.2.2
+qdrant-client>=1.9.0
+langchain-qdrant>=0.2.0
 
 # ── Data Ingestion ────────────────────────────────────────
 crawl4ai>=0.8.6
+playwright>=1.49.0
 pymupdf>=1.27.2.3
 youtube-transcript-api>=1.2.4
 httpx>=0.28.1
