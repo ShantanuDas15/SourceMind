@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, UploadFile, File
 from app.api.schemas.requests import IngestRequest
-from app.ingestion.pipeline import process_url_ingestion, process_pdf_ingestion
+from app.ingestion.pipeline import process_url_ingestion, process_pdf_ingestion, process_youtube_ingestion
 from loguru import logger
 
 router = APIRouter()
@@ -11,7 +11,11 @@ async def ingest_source(request: IngestRequest):
         url_str = str(request.url)
         logger.info(f"Received ingestion request for URL: {url_str} in session {request.session_id}")
         
-        result = await process_url_ingestion(url_str, session_id=request.session_id)
+        # # ponytail: quick string check for routing
+        if "youtube.com" in url_str or "youtu.be" in url_str:
+            result = await process_youtube_ingestion(url_str, session_id=request.session_id)
+        else:
+            result = await process_url_ingestion(url_str, session_id=request.session_id)
         
         return {
             "status": "success",

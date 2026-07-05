@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { useSourceStore } from './sourceStore';
+import { getHistory } from '../api/query';
 
 export interface Session {
   id: string;
@@ -54,6 +56,8 @@ export const useWorkspaceStore = create<WorkspaceState>()(
         setActiveSession: (id: string) => {
           if (get().sessions[id]) {
             set({ activeSessionId: id });
+            // # ponytail: ping backend history on session switch
+            getHistory(id).catch(() => {});
           }
         },
 
@@ -71,6 +75,9 @@ export const useWorkspaceStore = create<WorkspaceState>()(
         },
 
         deleteSession: (id: string) => {
+          // # ponytail: cascade delete to backend
+          useSourceStore.getState().clearSessionData(id);
+
           set((state) => {
             const newSessions = { ...state.sessions };
             delete newSessions[id];

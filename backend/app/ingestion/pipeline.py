@@ -80,3 +80,43 @@ async def process_pdf_ingestion(file_bytes: bytes, filename: str, session_id: st
     logger.info(f"--- Completed PDF Ingestion Pipeline for {filename} in session {session_id} ---")
     return {"filename": filename, "chunks_stored": len(documents), "source_id": source_id}
 
+
+async def process_youtube_ingestion(url: str, session_id: str = "sourcemind_default"):
+    """
+    Orchestrates the ingestion pipeline for a YouTube URL:
+    Parse Transcript -> Chunk -> Embed -> Store.
+    """
+    from app.ingestion.youtube_fetcher import fetch_youtube_transcript
+    logger.info(f"--- Starting YouTube Ingestion Pipeline for {url} in session {session_id} ---")
+    
+    # 1. Parse
+    raw_text = await fetch_youtube_transcript(url)
+    
+    if not raw_text.strip():
+        raise ValueError(f"No transcript found for {url}")
+    
+    # 2. Chunk
+    text_chunks = chunk_text(raw_text)
+    
+    # Create LangChain Document objects
+    documents = []
+    source_id = str(uuid.uuid4())
+    
+    for i, chunk in enumerate(text_chunks):
+        doc = Document(
+            page_content=chunk,
+            metadata={
+                "source": url,
+                "source_type": "youtube",
+                "chunk_index": i,
+                "source_id": source_id
+            }
+        )
+        documents.append(doc)
+        
+    # 3 & 4. Embed & Store
+    store_documents(documents, collection_name=session_id)
+    
+    logger.info(f"--- Completed YouTube Ingestion Pipeline for {url} in session {session_id} ---")
+    return {"url": url, "chunks_stored": len(documents), "source_id": source_id}
+

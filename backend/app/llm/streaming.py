@@ -29,6 +29,19 @@ async def stream_agent_response(query: str, session_id: str = "sourcemind_defaul
                 if content:
                     yield f"data: {json.dumps({'token': content})}\n\n"
 
+            # # ponytail: capture retrieve node output and emit source contexts
+            elif kind == "on_chain_end" and event.get("name") == "retrieve":
+                output = event["data"].get("output", {})
+                if isinstance(output, dict) and "context" in output:
+                    sources = [
+                        {
+                            "source": doc.metadata.get("source", "Unknown") if hasattr(doc, "metadata") else "Unknown",
+                            "chunk": doc.page_content if hasattr(doc, "page_content") else str(doc)
+                        }
+                        for doc in output["context"]
+                    ]
+                    yield f"data: {json.dumps({'sources': sources})}\n\n"
+
     except Exception as e:
         logger.error(f"SSE stream error: {e.__class__.__name__}: {e}")
         error_msg = "An error occurred while generating the response. Please try again."

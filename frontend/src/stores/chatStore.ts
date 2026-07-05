@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { api } from '../api/client';
 import { startStream } from '../api/stream';
+import { saveHistory } from '../api/query';
 import { useWorkspaceStore } from './workspaceStore';
 export type Role = 'user' | 'assistant';
 
@@ -18,6 +19,7 @@ export interface Message {
 interface ChatState {
   messagesBySession: Record<string, Message[]>;
   isStreaming: boolean;
+  isDegraded: boolean;
   currentInput: string;
   setCurrentInput: (input: string) => void;
   addMessage: (sessionId: string, role: Role, content: string) => void;
@@ -32,6 +34,7 @@ export const useChatStore = create<ChatState>()(
     (set, get) => ({
       messagesBySession: {},
       isStreaming: false,
+      isDegraded: false,
       currentInput: '',
       
       setCurrentInput: (currentInput) => set({ currentInput }),
@@ -89,7 +92,8 @@ export const useChatStore = create<ChatState>()(
           ...state.messagesBySession,
           [sessionId]: []
         },
-        isStreaming: false
+        isStreaming: false,
+        isDegraded: false
       })),
 
       submitQuery: async (sessionId, query) => {
@@ -102,6 +106,7 @@ export const useChatStore = create<ChatState>()(
 
           return {
             isStreaming: true,
+            isDegraded: false, // # ponytail: reset degraded flag on new query
             messagesBySession: {
               ...state.messagesBySession,
               [sessionId]: [
@@ -153,8 +158,8 @@ export const useChatStore = create<ChatState>()(
           // Get the history, but exclude the current query and the blank assistant placeholder we just pushed
           const messages = get().messagesBySession[sessionId] || [];
           const history = messages
-            .filter((msg: Message) => msg.content && msg.id !== `msg-${Date.now()}`) // remove empty ones
             .slice(0, -2) // remove the query and the blank assistant
+            .filter((msg: Message) => msg.content) // # ponytail: filter empty messages without Date.now() race condition
             .map((msg: Message) => ({ role: msg.role, content: msg.content }));
           activeAbortController = new AbortController();
             
@@ -176,14 +181,34 @@ export const useChatStore = create<ChatState>()(
               });
               return;
             }
+            if (data.sources) {
+              set((state) => {
+                const messages = state.messagesBySession[sessionId] || [];
+                if (messages.length === 0) return state;
+                const lastMessage = messages[messages.length - 1];
+                if (lastMessage && lastMessage.role === 'assistant') {
+                  // # ponytail: map raw sources to chunks to satisfy string[] type for evaluation
+                  const chunks = data.sources.map((s: any) => s.chunk);
+                  const updatedLastMessage = { ...lastMessage, contexts: chunks };
+                  return { messagesBySession: { ...state.messagesBySession, [sessionId]: [...messages.slice(0, -1), updatedLastMessage] } };
+                }
+                return state;
+              });
+            }
             if (data.token) {
               set((state) => {
                 const messages = state.messagesBySession[sessionId] || [];
                 if (messages.length === 0) return state;
                 const lastMessage = messages[messages.length - 1];
                 if (lastMessage && lastMessage.role === 'assistant') {
-                  const updatedLastMessage = { ...lastMessage, content: lastMessage.content + data.token };
-                  return { messagesBySession: { ...state.messagesBySession, [sessionId]: [...messages.slice(0, -1), updatedLastMessage] } };
+                  const newContent = lastMessage.content + data.token;
+                  // # ponytail: detect fallback sentinel
+                  let isDegraded = state.isDegraded;
+                  if (newContent.includes('⚠️ **AI service temporarily unavailable.**')) {
+                    isDegraded = true;
+                  }
+                  const updatedLastMessage = { ...lastMessage, content: newContent };
+                  return { isDegraded, messagesBySession: { ...state.messagesBySession, [sessionId]: [...messages.slice(0, -1), updatedLastMessage] } };
                 }
                 return state;
               });
@@ -216,6 +241,9 @@ export const useChatStore = create<ChatState>()(
           });
         } finally {
           set({ isStreaming: false });
+          // # ponytail: sync history to backend
+          const finalMessages = get().messagesBySession[sessionId] || [];
+          saveHistory(sessionId, finalMessages).catch(() => {});
         }
       }
     }),

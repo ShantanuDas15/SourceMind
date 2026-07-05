@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { useSourceStore } from './sourceStore';
 
 export type SourceType = 'web' | 'pdf' | 'youtube';
 
@@ -31,16 +32,21 @@ export const useIngestStore = create<IngestState>()(
 
       addSource: (sessionId, source) => set((state) => {
         const sources = state.sourcesBySession[sessionId] || [];
+        const newSources = [
+          {
+            ...source,
+            timestamp: Date.now(),
+          },
+          ...sources,
+        ];
+        
+        // # ponytail: fire-and-forget sync to backend
+        useSourceStore.getState().saveSessionSources(sessionId, newSources);
+
         return {
           sourcesBySession: {
             ...state.sourcesBySession,
-            [sessionId]: [
-              {
-                ...source,
-                timestamp: Date.now(),
-              },
-              ...sources,
-            ]
+            [sessionId]: newSources
           }
         };
       }),

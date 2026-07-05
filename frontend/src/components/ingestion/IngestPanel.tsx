@@ -37,8 +37,15 @@ export function IngestPanel() {
 
     // Client-side URL validation
     if (activeTab !== 'pdf') {
-      if (!isValidUrl(inputValue.trim())) {
+      const url = inputValue.trim();
+      if (!isValidUrl(url)) {
         addToast('Please enter a valid URL starting with http:// or https://', 'error');
+        return;
+      }
+      
+      // # ponytail: validate youtube pattern if on youtube tab
+      if (activeTab === 'youtube' && !url.includes('youtube.com/watch?v=') && !url.includes('youtu.be/')) {
+        addToast('Please enter a valid YouTube video URL (youtu.be/ or youtube.com/watch?v=)', 'error');
         return;
       }
     }
