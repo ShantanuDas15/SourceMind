@@ -1,5 +1,4 @@
 import { Streamdown } from 'streamdown';
-import ReactMarkdown from 'react-markdown';
 import { Brain, User } from 'lucide-react';
 import { Message } from '../../types';
 

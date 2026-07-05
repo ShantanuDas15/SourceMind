@@ -9,7 +9,7 @@ interface SourceStore {
 }
 
 // # ponytail: headless store just for side-effects, state is in ingestStore/chatStore
-export const useSourceStore = create<SourceStore>()((set) => ({
+export const useSourceStore = create<SourceStore>()(() => ({
   saveSessionSources: async (sessionId, sources) => {
     try {
       await saveSources(sessionId, sources);

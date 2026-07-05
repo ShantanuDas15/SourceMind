@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api } from '../../api/client';
-import { AlertCircle, X, WifiOff } from 'lucide-react';
+import { X, WifiOff } from 'lucide-react';
 
 export function ConnectionStatus() {
   const [isConnected, setIsConnected] = useState<boolean>(true);

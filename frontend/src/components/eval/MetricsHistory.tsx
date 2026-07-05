@@ -10,7 +10,7 @@ export function MetricsHistory() {
     let question = "Unknown Question";
     let timestamp = 0;
     
-    for (const [sessionId, messages] of Object.entries(messagesBySession)) {
+    for (const [, messages] of Object.entries(messagesBySession)) {
       const idx = messages.findIndex(m => m.id === messageId);
       if (idx !== -1) {
         timestamp = messages[idx].timestamp;

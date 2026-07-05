@@ -1,4 +1,4 @@
-import { Message, SourceType } from './index';
+import { Message } from './index';
 
 export interface StreamPayload {
   q: string;

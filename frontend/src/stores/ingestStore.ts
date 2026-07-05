@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useSourceStore } from './sourceStore';
 
-import { Source, SourceType } from '../types';
+import { Source } from '../types';
 
 interface IngestState {
   sourcesBySession: Record<string, Source[]>;
