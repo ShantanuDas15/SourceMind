@@ -192,3 +192,12 @@ scaffold.sh
 .copilot/
 .aider*
 .continue/
+
+# ──────────────────────────────────────────────────────────────
+#  📄 AI-GENERATED REPORTS & ANALYSIS
+# ──────────────────────────────────────────────────────────────
+*_gap_analysis.md
+*_GAP_ANALYSIS.md
+*_REPORT.md
+*_report.md
+PRE_FLIGHT_SANITIZATION_REPORT.md

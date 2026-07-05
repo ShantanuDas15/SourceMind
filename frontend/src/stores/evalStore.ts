@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { api } from '../api/client';
+import { evaluate } from '../api/eval';
 
 export interface EvalResult {
   faithfulness: number;
@@ -11,7 +11,7 @@ export interface EvalResult {
 
 interface EvalState {
   evaluations: Record<string, EvalResult>;
-  evaluateMessage: (messageId: string, question: string, answer: string, sessionId: string) => Promise<void>;
+  evaluateMessage: (messageId: string, question: string, answer: string, sessionId: string, contexts?: string[]) => Promise<void>;
   clearEvaluation: (messageId: string) => void;
 }
 
@@ -20,7 +20,7 @@ export const useEvalStore = create<EvalState>()(
     (set, get) => ({
       evaluations: {},
 
-      evaluateMessage: async (messageId, question, answer, sessionId) => {
+      evaluateMessage: async (messageId, question, answer, sessionId, contexts) => {
         // Prevent overlapping evaluations
         const current = get().evaluations[messageId];
         if (current?.isEvaluating) return;
@@ -33,7 +33,7 @@ export const useEvalStore = create<EvalState>()(
         }));
 
         try {
-          const result = await api.evaluate(question, answer, sessionId);
+          const result = await evaluate(question, answer, sessionId, contexts);
           set((state) => ({
             evaluations: {
               ...state.evaluations,

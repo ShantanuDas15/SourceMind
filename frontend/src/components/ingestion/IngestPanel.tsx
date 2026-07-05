@@ -3,7 +3,7 @@ import { useIngestStore } from '../../stores/ingestStore';
 import { useWorkspaceStore } from '../../stores/workspaceStore';
 import { useToastStore } from '../../stores/toastStore';
 import { Link as LinkIcon, FileText, Video, Loader2, X } from 'lucide-react';
-import { api } from '../../api/client';
+import { ingestUrl, ingestPdf } from '../../api/ingest';
 
 export function IngestPanel() {
   const [activeTab, setActiveTab] = useState<'web' | 'pdf' | 'youtube'>('web');
@@ -53,11 +53,11 @@ export function IngestPanel() {
 
     try {
       if (activeTab === 'pdf') {
-        await api.ingestPdf(selectedFile!, activeSessionId);
-        addSource(activeSessionId, { name: selectedFile!.name, type: 'pdf' });
+        const res = await ingestPdf(selectedFile!, activeSessionId);
+        addSource(activeSessionId, { id: res.data.source_id, name: selectedFile!.name, type: 'pdf' });
       } else {
-        await api.ingestUrl(inputValue.trim(), activeSessionId);
-        addSource(activeSessionId, { name: inputValue.trim(), type: activeTab });
+        const res = await ingestUrl(inputValue.trim(), activeSessionId);
+        addSource(activeSessionId, { id: res.data.source_id, name: inputValue.trim(), type: activeTab });
       }
       
       setStatus('success');
@@ -72,7 +72,7 @@ export function IngestPanel() {
       
     } catch (error: any) {
       console.error("Ingestion failed:", error);
-      const msg = error.response?.data?.detail || error.message || "Failed to ingest source.";
+      const msg = error.message || "Failed to ingest source.";
       setStatus('error', msg);
       addToast(msg, 'error');
       setTimeout(() => setStatus('idle'), 5000);

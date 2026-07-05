@@ -6,6 +6,7 @@ interface MetricsCardProps {
   question: string;
   answer: string;
   sessionId: string;
+  contexts?: string[];
 }
 
 const getScoreColor = (score: number) => {
@@ -14,12 +15,12 @@ const getScoreColor = (score: number) => {
   return 'bg-red-500 text-red-700 dark:text-red-400';
 };
 
-export function MetricsCard({ messageId, question, answer, sessionId }: MetricsCardProps) {
+export function MetricsCard({ messageId, question, answer, sessionId, contexts }: MetricsCardProps) {
   const { evaluations, evaluateMessage } = useEvalStore();
   const evaluation = evaluations[messageId];
 
   const handleEvaluate = () => {
-    evaluateMessage(messageId, question, answer, sessionId);
+    evaluateMessage(messageId, question, answer, sessionId, contexts);
   };
 
   if (!evaluation) {

@@ -48,6 +48,7 @@ export function ChatInput() {
             className="flex-1 max-h-[200px] bg-transparent text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 px-5 py-3.5 resize-none focus:outline-none leading-relaxed text-[15px]"
             rows={1}
             disabled={isStreaming}
+            maxLength={2000}
           />
           <button
             onClick={isStreaming ? () => setStreaming(false) : handleSubmit}
@@ -63,8 +64,12 @@ export function ChatInput() {
             {isStreaming ? <StopCircle className="w-5 h-5" /> : <Send className="w-5 h-5" />}
           </button>
         </div>
-        <div className="text-center mt-3">
-          <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">AI can make mistakes. Verify important information with the original sources.</p>
+        <div className="flex justify-between items-center mt-3 px-4">
+          <span className="w-12"></span>
+          <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium text-center flex-1">AI can make mistakes. Verify important information with the original sources.</p>
+          <p className={`text-[10px] font-medium w-12 text-right ${currentInput.length >= 2000 ? 'text-red-500' : 'text-slate-400 dark:text-slate-500'}`}>
+            {currentInput.length}/2000
+          </p>
         </div>
       </div>
     </div>

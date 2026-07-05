@@ -15,7 +15,7 @@ interface IngestState {
   status: 'idle' | 'ingesting' | 'success' | 'error';
   errorMessage: string | null;
   isPanelOpen: boolean;
-  addSource: (sessionId: string, source: Omit<Source, 'id' | 'timestamp'>) => void;
+  addSource: (sessionId: string, source: Omit<Source, 'timestamp'>) => void;
   removeSource: (sessionId: string, id: string) => void;
   setStatus: (status: IngestState['status'], errorMessage?: string | null) => void;
   setPanelOpen: (isOpen: boolean) => void;
@@ -37,7 +37,6 @@ export const useIngestStore = create<IngestState>()(
             [sessionId]: [
               {
                 ...source,
-                id: `src-${Date.now()}`,
                 timestamp: Date.now(),
               },
               ...sources,

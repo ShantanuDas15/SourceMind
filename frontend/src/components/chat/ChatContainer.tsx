@@ -63,6 +63,7 @@ export function ChatContainer() {
                     question={previousMessage.content} 
                     answer={message.content}
                     sessionId={activeSessionId}
+                    contexts={message.contexts}
                   />
                 )}
               </div>
