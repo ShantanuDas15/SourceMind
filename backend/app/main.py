@@ -20,6 +20,13 @@ app.include_router(query.router, prefix="/api", tags=["query"])
 app.include_router(sources.router, prefix="/api", tags=["sources"])
 
 
+@app.get("/")
+async def root():
+    return {
+        "status": "ok",
+        "message": "SourceMind API is running. Access /docs for the Swagger UI."
+    }
+
 @app.get("/api/health")
 async def health_check():
     return {
