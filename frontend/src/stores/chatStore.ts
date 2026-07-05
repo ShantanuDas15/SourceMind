@@ -4,17 +4,9 @@ import { api } from '../api/client';
 import { startStream } from '../api/stream';
 import { saveHistory } from '../api/query';
 import { useWorkspaceStore } from './workspaceStore';
-export type Role = 'user' | 'assistant';
+import { Message, Role } from '../types';
 
 let activeAbortController: AbortController | null = null;
-
-export interface Message {
-  id: string;
-  role: Role;
-  content: string;
-  timestamp: number;
-  contexts?: string[];
-}
 
 interface ChatState {
   messagesBySession: Record<string, Message[]>;

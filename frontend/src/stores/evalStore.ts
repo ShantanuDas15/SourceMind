@@ -2,12 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { evaluate } from '../api/eval';
 
-export interface EvalResult {
-  faithfulness: number;
-  answer_relevancy: number;
-  isEvaluating: boolean;
-  error?: string;
-}
+import { EvalResult } from '../types';
 
 interface EvalState {
   evaluations: Record<string, EvalResult>;

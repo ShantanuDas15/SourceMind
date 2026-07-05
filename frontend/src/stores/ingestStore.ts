@@ -2,14 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useSourceStore } from './sourceStore';
 
-export type SourceType = 'web' | 'pdf' | 'youtube';
-
-export interface Source {
-  id: string;
-  name: string;
-  type: SourceType;
-  timestamp: number;
-}
+import { Source, SourceType } from '../types';
 
 interface IngestState {
   sourcesBySession: Record<string, Source[]>;

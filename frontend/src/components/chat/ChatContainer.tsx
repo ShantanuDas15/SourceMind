@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { useChatStore, Message } from '../../stores/chatStore';
+import { useChatStore } from '../../stores/chatStore';
+import { Message } from '../../types';
 import { useWorkspaceStore } from '../../stores/workspaceStore';
 import { StreamingMessage } from './StreamingMessage';
 import { MetricsCard } from '../eval/MetricsCard';

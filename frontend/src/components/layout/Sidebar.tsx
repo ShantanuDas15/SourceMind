@@ -1,5 +1,6 @@
-import { useIngestStore, Source } from '../../stores/ingestStore';
-import { useChatStore, Message } from '../../stores/chatStore';
+import { useIngestStore } from '../../stores/ingestStore';
+import { useChatStore } from '../../stores/chatStore';
+import { Source, Message } from '../../types';
 import { useWorkspaceStore } from '../../stores/workspaceStore';
 import { Database, Link, FileText, Video, Plus, Brain, MessageSquare, Trash2, X } from 'lucide-react';
 

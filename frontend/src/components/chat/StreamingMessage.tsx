@@ -1,6 +1,7 @@
 import { Streamdown } from 'streamdown';
+import ReactMarkdown from 'react-markdown';
 import { Brain, User } from 'lucide-react';
-import { Message } from '../../stores/chatStore';
+import { Message } from '../../types';
 
 interface StreamingMessageProps {
   message: Message;
