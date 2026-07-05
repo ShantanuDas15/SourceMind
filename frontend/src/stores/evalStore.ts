@@ -11,6 +11,8 @@ export interface EvalResult {
 
 interface EvalState {
   evaluations: Record<string, EvalResult>;
+  isDashboardOpen: boolean;
+  setDashboardOpen: (isOpen: boolean) => void;
   evaluateMessage: (messageId: string, question: string, answer: string, sessionId: string, contexts?: string[]) => Promise<void>;
   clearEvaluation: (messageId: string) => void;
 }
@@ -19,6 +21,8 @@ export const useEvalStore = create<EvalState>()(
   persist(
     (set, get) => ({
       evaluations: {},
+      isDashboardOpen: false,
+      setDashboardOpen: (isOpen) => set({ isDashboardOpen: isOpen }),
 
       evaluateMessage: async (messageId, question, answer, sessionId, contexts) => {
         // Prevent overlapping evaluations

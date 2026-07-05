@@ -5,6 +5,7 @@ import { IngestPanel } from './components/ingestion/IngestPanel';
 import { ToastContainer } from './components/ui/ToastContainer';
 import { ConnectionStatus } from './components/common/ConnectionStatus';
 import { DegradedBanner } from './components/common/DegradedBanner';
+import { EvalDashboard } from './components/eval/EvalDashboard';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <ChatInput />
         <IngestPanel />
       </div>
+      <EvalDashboard />
       <ToastContainer />
     </MainLayout>
   );

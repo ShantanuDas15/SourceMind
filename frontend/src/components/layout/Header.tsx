@@ -1,8 +1,10 @@
-import { Moon, Sun } from 'lucide-react';
+import { Moon, Sun, BarChart2 } from 'lucide-react';
 import { useThemeStore } from '../../stores/themeStore';
+import { useEvalStore } from '../../stores/evalStore';
 
 export function Header() {
   const { isDarkMode, toggleTheme } = useThemeStore();
+  const setDashboardOpen = useEvalStore((state) => state.setDashboardOpen);
 
   return (
     <header className="h-16 flex items-center justify-between px-8 bg-white dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800/60 z-10 flex-shrink-0 transition-colors">
@@ -18,6 +20,14 @@ export function Header() {
           Groq Llama 3.3 Connected
         </div>
         
+        <button 
+          onClick={() => setDashboardOpen(true)}
+          title="Open Evaluation Dashboard"
+          className="p-2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800"
+        >
+          <BarChart2 className="w-4 h-4" />
+        </button>
+
         <button 
           onClick={toggleTheme}
           className="p-2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800"
