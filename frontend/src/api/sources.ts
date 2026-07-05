@@ -1,15 +1,18 @@
-// ponytail: native fetch for sources CRUD
+import { apiClient } from './client';
+
 const base = '/api/sources';
 
-export const getSources = async (sessionId: string) => 
-  (await fetch(`${base}/${sessionId}`)).json();
+export const getSources = async (sessionId: string) => {
+  const { data } = await apiClient.get(`${base}/${sessionId}`);
+  return data;
+};
 
-export const saveSources = async (sessionId: string, sources: any[]) => 
-  (await fetch(base, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ session_id: sessionId, sources })
-  })).json();
+export const saveSources = async (sessionId: string, sources: any[]) => {
+  const { data } = await apiClient.post(base, { session_id: sessionId, sources });
+  return data;
+};
 
-export const clearSources = async (sessionId: string) => 
-  (await fetch(`${base}/${sessionId}`, { method: 'DELETE' })).json();
+export const clearSources = async (sessionId: string) => {
+  const { data } = await apiClient.delete(`${base}/${sessionId}`);
+  return data;
+};
