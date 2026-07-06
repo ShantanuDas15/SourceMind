@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from app.config import settings
 from app.middleware.cors import setup_cors
 from app.api.routes import ingest, stream, metrics, query, sources
+from app.llm.circuit_breaker import groq_circuit_breaker
 
 app = FastAPI(
     title="SourceMind API",
@@ -32,5 +33,6 @@ async def health_check():
     return {
         "status": "ok",
         "message": "SourceMind Backend is running",
-        "environment": settings.APP_ENV
+        "environment": settings.APP_ENV,
+        "circuit_breaker_state": groq_circuit_breaker.state.value
     }
