@@ -20,10 +20,10 @@ export function useIngest(sessionId: string) {
       try {
         const result = await ingestUrl(url, sessionId);
         store.addSource(sessionId, {
-          id: result.source_id,
+          id: result.data.source_id,
           name: url,
           type: 'web',
-          metadata: { chunks: result.chunks_stored }
+          metadata: { chunks: result.data.chunks_stored }
         });
         store.setStatus('success');
         return result;
@@ -39,10 +39,10 @@ export function useIngest(sessionId: string) {
       try {
         const result = await ingestPdf(file, sessionId);
         store.addSource(sessionId, {
-          id: result.source_id,
+          id: result.data.source_id,
           name: file.name,
           type: 'pdf',
-          metadata: { chunks: result.chunks_stored }
+          metadata: { chunks: result.data.chunks_stored }
         });
         store.setStatus('success');
         return result;

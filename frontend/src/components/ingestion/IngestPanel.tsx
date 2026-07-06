@@ -59,18 +59,22 @@ export function IngestPanel() {
     setStatus('ingesting');
 
     try {
+      let chunksStored = 0;
+      
       if (activeTab === 'pdf') {
         const res = await ingestPdf(selectedFile!, activeSessionId);
+        chunksStored = res.data?.chunks_stored || 0;
         addSource(activeSessionId, { id: res.data.source_id, name: selectedFile!.name, type: 'pdf' });
       } else {
         const res = await ingestUrl(inputValue.trim(), activeSessionId);
+        chunksStored = res.data?.chunks_stored || 0;
         addSource(activeSessionId, { id: res.data.source_id, name: inputValue.trim(), type: activeTab });
       }
       
       setStatus('success');
       setInputValue('');
       setSelectedFile(null);
-      addToast('Source ingested successfully!', 'success');
+      addToast(`Ingested successfully (${chunksStored} chunks)`, 'success');
       
       setTimeout(() => {
         setStatus('idle');
