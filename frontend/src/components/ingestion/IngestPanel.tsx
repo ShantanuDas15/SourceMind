@@ -17,7 +17,12 @@ export function IngestPanel() {
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0]);
+      const file = e.target.files[0];
+      if (file.type !== 'application/pdf') {
+        addToast('Please select a valid PDF file.', 'error');
+        return;
+      }
+      setSelectedFile(file);
     }
   };
 
@@ -50,10 +55,16 @@ export function IngestPanel() {
       }
     }
 
-    // Client-side PDF size validation (10MB)
-    if (activeTab === 'pdf' && selectedFile && selectedFile.size > 10 * 1024 * 1024) {
-      addToast('PDF file exceeds the 10MB size limit.', 'error');
-      return;
+    // Client-side PDF type and size validation (10MB)
+    if (activeTab === 'pdf' && selectedFile) {
+      if (selectedFile.type !== 'application/pdf') {
+        addToast('Only PDF files are supported.', 'error');
+        return;
+      }
+      if (selectedFile.size > 10 * 1024 * 1024) {
+        addToast('PDF file exceeds the 10MB size limit.', 'error');
+        return;
+      }
     }
 
     setStatus('ingesting');
