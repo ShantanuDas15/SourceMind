@@ -23,7 +23,6 @@ export function useIngest(sessionId: string) {
           id: result.data.source_id,
           name: url,
           type: 'web',
-          metadata: { chunks: result.data.chunks_stored }
         });
         store.setStatus('success');
         return result;
@@ -42,7 +41,6 @@ export function useIngest(sessionId: string) {
           id: result.data.source_id,
           name: file.name,
           type: 'pdf',
-          metadata: { chunks: result.data.chunks_stored }
         });
         store.setStatus('success');
         return result;
